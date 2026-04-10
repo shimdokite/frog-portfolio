@@ -5,9 +5,11 @@ const props = withDefaults(
   defineProps<{
     modelValue: boolean;
     closeOnOverlay?: boolean;
+    panelClass?: string;
   }>(),
   {
-    closeOnOverlay: true
+    closeOnOverlay: true,
+    panelClass: 'max-w-lg'
   }
 );
 
@@ -60,7 +62,8 @@ onBeforeUnmount(() => {
         @click="handleOverlayClick"
       >
         <div
-          class="relative w-full max-w-lg rounded-3xl bg-white p-8 shadow-2xl"
+          class="relative w-full rounded-3xl bg-white p-8 shadow-2xl"
+          :class="panelClass"
           role="dialog"
           aria-modal="true"
           @click.stop
