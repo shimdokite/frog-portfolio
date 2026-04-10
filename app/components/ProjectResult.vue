@@ -25,7 +25,7 @@ defineProps<{
             rel="noopener noreferrer"
             class="break-all text-sm font-semibold leading-6 text-slate-700 underline-offset-4 transition hover:text-slate-950 hover:underline"
           >
-            {{ link }}
+            링크
           </a>
         </p>
       </div>
