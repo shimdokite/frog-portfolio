@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <article class="space-y-3">
-    <div class="space-y-1">
+    <div class="flex justify-between space-y-1">
       <h3 class="text-xl font-semibold text-slate-900">
         {{ projectName }}
       </h3>
