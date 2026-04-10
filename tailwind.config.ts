@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 export default <Partial<Config>>{
   theme: {
@@ -13,6 +13,7 @@ export default <Partial<Config>>{
         soft: '0 20px 70px rgba(81, 43, 21, 0.12)'
       },
       fontFamily: {
+        joti: ['Joti One', 'cursive'],
         sans: [
           'Pretendard Variable',
           'Pretendard',
@@ -22,4 +23,4 @@ export default <Partial<Config>>{
       }
     }
   }
-}
+};
