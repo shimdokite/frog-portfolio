@@ -27,7 +27,9 @@ const isOpen = computed({
       >
         Work Experience
       </p>
-      <h2 class="text-3xl font-semibold text-slate-900">
+      <h2
+        class="text-[clamp(1.5rem,3vw,1.875rem)] font-semibold leading-tight text-slate-900"
+      >
         NI System | Web Developer
       </h2>
       <p class="text-base leading-7 text-slate-600">2024.06.14 - 2025.11.07</p>

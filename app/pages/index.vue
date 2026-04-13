@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import Edu from '~/components/Edu.vue';
 import Intro from '~/components/Intro.vue';
 import Project from '~/components/Project.vue';
@@ -15,9 +15,15 @@ const tutorialFinished = ref(false);
 const currentPad = ref(1);
 const activePad = ref<number | null>(null);
 const direction = ref('right');
+const viewportWidth = ref(1470);
+const viewportHeight = ref(900);
 const frogStage = ref<
   'idle' | 'jumping' | 'down_jumping' | 'up_jumping' | 'landing'
 >('idle');
+
+const POND_STAGE_WIDTH = 1219;
+const POND_STAGE_HEIGHT = 820;
+const POND_STAGE_PADDING = 24;
 
 const padPositions = [
   { left: 'calc(50% - 30rem)', top: '46%' },
@@ -51,6 +57,42 @@ const frogDirectionStyle = computed(() => {
     transform: `scaleX(${direction.value === 'left' ? 1 : -1})`
   };
 });
+
+const pondStageScale = computed(() => {
+  if (viewportWidth.value > 1218) {
+    return 1;
+  }
+
+  const horizontalScale =
+    (viewportWidth.value - POND_STAGE_PADDING) / POND_STAGE_WIDTH;
+  const verticalScale =
+    (viewportHeight.value - POND_STAGE_PADDING) / POND_STAGE_HEIGHT;
+
+  return Math.max(Math.min(horizontalScale, verticalScale, 1), 0);
+});
+
+const pondStageStyle = computed(() => {
+  if (viewportWidth.value > 1218) {
+    return {};
+  }
+
+  return {
+    width: `${POND_STAGE_WIDTH}px`,
+    height: `${POND_STAGE_HEIGHT}px`,
+    flex: `0 0 ${POND_STAGE_WIDTH}px`,
+    transform: `scale(${pondStageScale.value})`,
+    transformOrigin: 'center center'
+  };
+});
+
+const syncViewport = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  viewportWidth.value = window.innerWidth;
+  viewportHeight.value = window.innerHeight;
+};
 
 const wait = (milliseconds: number) => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -144,109 +186,126 @@ watch(isModalOpen, (isOpen, previous) => {
     autoOpenModal.value = false;
   }
 });
+
+onMounted(() => {
+  syncViewport();
+  window.addEventListener('resize', syncViewport);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', syncViewport);
+});
 </script>
 
 <template>
   <main class="relative">
-    <div class="flex h-screen items-center justify-center">
-      <button
-        type="button"
-        class="group absolute z-10 cursor-pointer border-0 bg-transparent p-0 transition-[left,top] duration-500"
-        :style="frogPositionStyle"
-        aria-label="Open portfolio modal"
-        @click="handleFrogClick"
-      >
-        <span
-          v-if="showClickMe"
-          class="font-joti absolute -top-8 left-1/2 -translate-x-1/2 -rotate-6 whitespace-nowrap text-xl font-semibold text-[#ECEA5F] transition-transform duration-300 ease-out group-hover:-translate-y-2"
-        >
-          Click Me !
-        </span>
-        <div :style="frogDirectionStyle">
-          <NuxtImg :src="frogImageSrc" :width="110" alt="frog" />
-        </div>
-      </button>
-
+    <div class="pond-stage-frame">
       <div
-        :class="[
-          'relative mr-10 cursor-pointer',
-          activePad === 1 ? 'pad-sink' : ''
-        ]"
-        @click="handleLilyPadClick(1)"
+        class="pond-stage flex h-screen items-center justify-center"
+        :style="pondStageStyle"
       >
-        <div
-          v-if="activePad === 1"
-          class="pointer-events-none absolute inset-0"
+        <button
+          type="button"
+          class="group absolute z-10 cursor-pointer border-0 bg-transparent p-0 transition-[left,top] duration-500"
+          :style="frogPositionStyle"
+          aria-label="Open portfolio modal"
+          @click="handleFrogClick"
         >
-          <span class="pad-wave-ring ring-1"></span>
-          <span class="pad-wave-ring ring-2"></span>
-        </div>
-        <NuxtImg src="/images/lily_pad_1.png" :width="220" />
-      </div>
+          <span
+            v-if="showClickMe"
+            class="absolute -top-8 left-1/2 -translate-x-1/2 -rotate-6 whitespace-nowrap font-joti text-xl font-semibold text-[#ECEA5F] transition-transform duration-300 ease-out group-hover:-translate-y-2"
+          >
+            Click Me !
+          </span>
+          <div :style="frogDirectionStyle">
+            <NuxtImg :src="frogImageSrc" :width="110" alt="frog" />
+          </div>
+        </button>
 
-      <div
-        :class="[
-          'relative -mb-20 mr-12 cursor-pointer',
-          activePad === 2 ? 'pad-sink' : ''
-        ]"
-        @click="handleLilyPadClick(2)"
-      >
         <div
-          v-if="activePad === 2"
-          class="pointer-events-none absolute inset-0"
+          :class="[
+            'relative mr-10 cursor-pointer',
+            activePad === 1 ? 'pad-sink' : ''
+          ]"
+          @click="handleLilyPadClick(1)"
         >
-          <span class="pad-wave-ring ring-1"></span>
-          <span class="pad-wave-ring ring-2"></span>
+          <div
+            v-if="activePad === 1"
+            class="pointer-events-none absolute inset-0"
+          >
+            <span class="pad-wave-ring ring-1"></span>
+            <span class="pad-wave-ring ring-2"></span>
+          </div>
+          <NuxtImg src="/images/lily_pad_1.png" :width="220" />
         </div>
-        <NuxtImg src="/images/lily_pad_2.png" :width="210" />
-      </div>
 
-      <div
-        :class="[
-          'relative mb-40 cursor-pointer',
-          activePad === 3 ? 'pad-sink' : ''
-        ]"
-        @click="handleLilyPadClick(3)"
-      >
         <div
-          v-if="activePad === 3"
-          class="pointer-events-none absolute inset-0"
+          :class="[
+            'relative -mb-20 mr-12 cursor-pointer',
+            activePad === 2 ? 'pad-sink' : ''
+          ]"
+          @click="handleLilyPadClick(2)"
         >
-          <span class="pad-wave-ring ring-1"></span>
-          <span class="pad-wave-ring ring-2"></span>
+          <div
+            v-if="activePad === 2"
+            class="pointer-events-none absolute inset-0"
+          >
+            <span class="pad-wave-ring ring-1"></span>
+            <span class="pad-wave-ring ring-2"></span>
+          </div>
+          <NuxtImg src="/images/lily_pad_2.png" :width="210" />
         </div>
-        <NuxtImg src="/images/lily_pad_3.png" :width="220" />
-      </div>
 
-      <div
-        :class="[
-          'relative -mb-20 mr-12 cursor-pointer',
-          activePad === 4 ? 'pad-sink' : ''
-        ]"
-        @click="handleLilyPadClick(4)"
-      >
         <div
-          v-if="activePad === 4"
-          class="pointer-events-none absolute inset-0"
+          :class="[
+            'relative mb-40 cursor-pointer',
+            activePad === 3 ? 'pad-sink' : ''
+          ]"
+          @click="handleLilyPadClick(3)"
         >
-          <span class="pad-wave-ring ring-1"></span>
-          <span class="pad-wave-ring ring-2"></span>
+          <div
+            v-if="activePad === 3"
+            class="pointer-events-none absolute inset-0"
+          >
+            <span class="pad-wave-ring ring-1"></span>
+            <span class="pad-wave-ring ring-2"></span>
+          </div>
+          <NuxtImg src="/images/lily_pad_3.png" :width="220" />
         </div>
-        <NuxtImg src="/images/lily_pad_2.png" :width="210" />
-      </div>
 
-      <div
-        :class="['relative cursor-pointer', activePad === 5 ? 'pad-sink' : '']"
-        @click="handleLilyPadClick(5)"
-      >
         <div
-          v-if="activePad === 5"
-          class="pointer-events-none absolute inset-0"
+          :class="[
+            'relative -mb-20 mr-12 cursor-pointer',
+            activePad === 4 ? 'pad-sink' : ''
+          ]"
+          @click="handleLilyPadClick(4)"
         >
-          <span class="pad-wave-ring ring-1"></span>
-          <span class="pad-wave-ring ring-2"></span>
+          <div
+            v-if="activePad === 4"
+            class="pointer-events-none absolute inset-0"
+          >
+            <span class="pad-wave-ring ring-1"></span>
+            <span class="pad-wave-ring ring-2"></span>
+          </div>
+          <NuxtImg src="/images/lily_pad_2.png" :width="210" />
         </div>
-        <NuxtImg src="/images/lily_pad_1.png" :width="220" />
+
+        <div
+          :class="[
+            'relative cursor-pointer',
+            activePad === 5 ? 'pad-sink' : ''
+          ]"
+          @click="handleLilyPadClick(5)"
+        >
+          <div
+            v-if="activePad === 5"
+            class="pointer-events-none absolute inset-0"
+          >
+            <span class="pad-wave-ring ring-1"></span>
+            <span class="pad-wave-ring ring-2"></span>
+          </div>
+          <NuxtImg src="/images/lily_pad_1.png" :width="220" />
+        </div>
       </div>
     </div>
 
@@ -259,6 +318,21 @@ watch(isModalOpen, (isOpen, previous) => {
 </template>
 
 <style scoped>
+.pond-stage-frame {
+  width: 100%;
+  height: 100vh;
+}
+
+@media (max-width: 1218px) {
+  .pond-stage-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 12px;
+  }
+}
+
 .pad-sink {
   animation: pad-sink 0.65s ease-in-out;
 }
