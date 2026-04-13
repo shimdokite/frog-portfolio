@@ -26,7 +26,9 @@ const isOpen = computed({
       >
         Introduce
       </p>
-      <h2 class="text-3xl font-semibold text-slate-900">
+      <h2
+        class="text-[clamp(1.5rem,3vw,1.6rem)] font-semibold leading-tight text-slate-900"
+      >
         안녕하세요,<br />
         프론트엔드 개발자 심도연 입니다.
       </h2>
