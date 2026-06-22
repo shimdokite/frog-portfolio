@@ -2,6 +2,7 @@
   <div class="app-pond-bg min-h-screen">
     <NuxtRouteAnnouncer />
     <NuxtPage />
+    <GithubLink />
   </div>
 </template>
 
