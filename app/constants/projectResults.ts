@@ -1,75 +1,66 @@
 export type ProjectResult = {
-  projectName: string;
-  role: string;
-  period: string;
-  link: string;
-  description: string;
-  responsibilities: string[];
-  skills: string[];
+  title: string;
+  problem: string[];
+  solution: string[];
+  result: string[];
 };
 
 export const projectResults: ProjectResult[] = [
   {
-    projectName: 'dog jump',
-    role: '1인 FE',
-    period: '25.10 ~ 진행 중',
-    link: 'https://run-jump-dog.vercel.app',
-    description: '장애물을 피해 점수를 획득하는 점프게임',
-    responsibilities: [
-      'Canvas 기반 렌더링과 애니메이션 처리 구현',
-      'requestAnimationFrame 기반 게임 루프 및 상태 관리 로직 구현',
-      '키보드 및 터치 입력 처리로 모바일 환경 대응'
+    title:
+      '대량 상품 조회 시 판매자 데이터 순차 호출로 인한 병목 현상 17s → 2s로 개선',
+    problem: [
+      '메루카리 리스트 조회 시 상품마다 셀러 프로필 API를 개별 호출해 외부 API 요청이 상품 수만큼 누적됐다.',
+      'productSingleMercari() 내부에서 셀러 정보를 순차 조회하면서 리스트 응답 전체가 느려지는 병목이 발생했다.',
+      '그 결과 메루카리 리스트 조회 시간이 약 17초까지 증가해 사용자 체감 성능이 크게 떨어졌다.'
     ],
-    skills: ['TypeScript', 'Next.js', 'Tailwind CSS']
+    solution: [
+      '먼저 상품별 셀러 프로필 조회를 Promise.all()로 병렬 처리해 순차 대기 시간을 줄였다.',
+      '이후 리스트 화면에서는 셀러 상세 정보가 필수 데이터가 아니라고 판단해 셀러 프로필 조회 자체를 제거했다.',
+      '애플리케이션 레벨에서는 상세 조회와 리스트 조회의 데이터 요구사항을 분리해, 리스트는 가볍게 응답하도록 구조를 조정했다.'
+    ],
+    result: [
+      '메루카리 리스트 조회 시간이 약 17초에서 약 2초 수준으로 단축됐다.',
+      '외부 메루카리 API 호출 수가 줄어 네트워크 대기 시간과 실패 가능성이 함께 감소했다.',
+      '리스트 조회는 빠르게 제공하고, 셀러 정보가 필요한 상세 화면에서만 추가 데이터를 조회하는 흐름으로 개선됐다.'
+    ]
   },
   {
-    projectName: 'inoico',
-    role: '2인 FE',
-    period: '25.06 ~ 25.08',
-    link: 'https://inoico.vercel.app',
-    description: '듣고 있는 음악의 분위기에 맞는 커피를 추천해주는 사이트',
-    responsibilities: [
-      '전반적인 기획 및 디자인 설계 진행',
-      '외부 음악 인식 API(AcrCloud)를 활용한 음원 식별 기능 구현'
+    title:
+      '개별 등록 방식에서 대량 등록 및 스크래핑 자동화를 도입하여 반복적인 상품 등록 업무를 개선',
+    problem: [
+      '상품 등록 시 수집, 품목 생성, 옵션 처리, 금칙어 검사, 쇼핑몰별 설정을 운영자가 반복 수행해야 했다.',
+      '옵션 상품, 아마존 상세 정보 저장 등 예외 케이스가 많아 누락과 버그가 자주 발생했다.',
+      '상품 수 증가로 개별 등록 방식의 운영 효율이 급격히 저하됐다.'
     ],
-    skills: ['TypeScript', 'Next.js', 'React-query', 'Zustand', 'Tailwind CSS']
+    solution: [
+      '/product/simpleRegist 기반 간편 등록 기능을 구현하여 수집부터 등록까지의 과정을 일괄 처리했다.',
+      'scrapAndSkuRegist 공통 함수를 분리해 일반 등록·간편 등록·대량 등록이 동일한 로직을 재사용하도록 개선했다.',
+      '/productBatch, /cron/registBatchProducts를 통해 URL 큐 기반 대량 등록 프로세스를 구축했다.'
+    ],
+    result: [
+      '간편 등록에서는 상품 1개 등록 시 입력 항목을 약 10~15개에서 3~4개 수준으로 줄였다.',
+      '대량 등록에서는 링크만 등록하면 스크래핑과 상품 생성을 자동 처리하도록 개선해, 100개 상품 중 평균 80개 정도를 한 번에 처리할 수 있게 됐다.',
+      '운영자가 상품별 정보를 직접 입력하던 작업을 배치 단위로 맡겨두고 다른 업무를 진행할 수 있는 흐름으로 바꿨다.',
+      '옵션 상품, 쇼핑몰별 설정, 재시도 및 데드락 대응을 포함한 안정적인 등록 프로세스를 구축했다.'
+    ]
   },
   {
-    projectName: 'ImageWorks',
-    role: '1인 FE',
-    period: '25.03 ~ 25.04',
-    link: 'https://www.imageworks.kr',
-    description:
-      '교육, 출판, 디자인 컨설팅 전문 업체 Imageworks(이미지공작소) 소개 사이트',
-    responsibilities: [
-      'Next.js 기반 SSG 방식 구현',
-      '이미지 크기 미지정으로 발생하던 Layout Shift 문제를 해결하여 Lighthouse CLS 점수 70 → 100 개선',
-      'Google Search Console, Naver Search Advisor 활용해 사이트 색인 및 검색 결과 노출 확인'
+    title: '자동 투자 에이전트로 주문장과 실시간 시장 화면 개선',
+    problem: [
+      '초기 유저 주문만으로는 호가와 체결이 부족해 시장이 정적으로 보일 가능성이 있었다.',
+      '단순 더미 거래는 잔고, 보유 수량, 주문 검증과 분리되면 실제 서비스 흐름과 어긋날 수 있었다.',
+      'ADK 기반 판단을 붙이더라도 비용, 실패, 장외 거래, 동시 실행 같은 운영 리스크를 제어해야 했다.'
     ],
-    skills: ['TypeScript', 'Next.js', 'Tailwind CSS']
-  },
-  {
-    projectName: 'GrowStory',
-    role: '6인 FE',
-    period: '23.09 ~ 23.10',
-    link: 'https://growstory.vercel.app',
-    description: '식물 집사들을 위한 커뮤니티 사이트',
-    responsibilities: [
-      '팀원 구성 및 핵심 서비스 아이디어 구상과 기획',
-      '유저 플로우 설계를 주도하고 팀원과 협업하여 기획 상의 모순을 발견 및 개선(Figma)',
-      '구글 OAuth 및 자체 로그인 기반 인증 시스템 구현',
-      '사용자 정보 조회/수정 등 마이페이지 기능 구현',
-      '비회원 사용자 접근성을 위한 게스트 모드 기능 구현',
-      'WebSocket 기반 1:1 문의 채팅 기능 구현으로 실시간 커뮤니케이션 지원'
+    solution: [
+      'VALUE/GROWTH/MOMENTUM rule-based 에이전트가 먼저 후보 종목과 기본 매매 의도를 만들고, 상위 후보만 ADK 워커가 재판단하도록 구성했다.',
+      '에이전트 주문도 사용자 주문과 같은 주문 생성, 검증, 체결, 포트폴리오 반영 로직을 타게 해 애플리케이션 레벨의 데이터 일관성을 유지했다.',
+      '스케줄러, 내부 API 인증 토큰, 시장 시간/휴일 판단, 실행 중복 방지, ADK 실패 시 rule-based fallback을 넣어 운영 가능한 자동매매 흐름으로 묶었다.'
     ],
-    skills: [
-      'TypeScript',
-      'Next.js',
-      'React-query',
-      'Zustand',
-      'React-hook-form',
-      'Tailwind CSS',
-      'Framer Motion'
+    result: [
+      '자동 에이전트가 실제 주문장에 매수/매도 주문을 공급하면서 사용자가 볼 수 있는 미체결 주문과 체결 이벤트가 자연스럽게 생성됐다.',
+      '체결 시 주가, 캔들, 거래량, 포트폴리오, 거래 내역이 함께 갱신되도록 연결해 시장 화면의 실시간성을 높였다.',
+      '판단 로그와 주문 ID를 연결해 ADK 판단, rule-based fallback, 거절/실패 사유, 실행 결과를 운영 관점에서 추적할 수 있게 했다.'
     ]
   }
 ];

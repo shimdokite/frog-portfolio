@@ -25,20 +25,15 @@ const isOpen = computed({
       <p
         class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500"
       >
-        Work Experience
+        Experience
       </p>
-      <h2
-        class="text-[clamp(1.5rem,3vw,1.875rem)] font-semibold leading-tight text-slate-900"
-      >
-        NI System | Web Developer
-      </h2>
-      <p class="text-base leading-7 text-slate-600">2024.06.14 - 2025.11.07</p>
       <div class="-mr-3 max-h-[min(28rem,55vh)] space-y-6 overflow-y-auto pr-5">
         <WorkResult
           v-for="workResult in workResults"
           :key="workResult.projectName"
           :project-name="workResult.projectName"
           :period="workResult.period"
+          :link="workResult.link"
           :results="workResult.results"
         />
       </div>

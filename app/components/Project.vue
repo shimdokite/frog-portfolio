@@ -25,19 +25,16 @@ const isOpen = computed({
       <p
         class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500"
       >
-        Project
+        Impact
       </p>
       <div class="-mr-3 max-h-[min(28rem,55vh)] space-y-8 overflow-y-auto pr-5">
         <ProjectResult
           v-for="projectResult in projectResults"
-          :key="projectResult.projectName"
-          :project-name="projectResult.projectName"
-          :role="projectResult.role"
-          :period="projectResult.period"
-          :link="projectResult.link"
-          :description="projectResult.description"
-          :responsibilities="projectResult.responsibilities"
-          :skills="projectResult.skills"
+          :key="projectResult.title"
+          :title="projectResult.title"
+          :problem="projectResult.problem"
+          :solution="projectResult.solution"
+          :result="projectResult.result"
         />
       </div>
     </div>
